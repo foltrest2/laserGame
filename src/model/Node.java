@@ -17,7 +17,7 @@ public class Node {
 		col = c;
 		mirror = "";
 		contain = "[ ]";
-		reference = (row+1) + "" +getNameCol() + " ";
+		reference = (row+1) + "" +getNameCol() + "";
 	}
 
 	public String getMirror() {

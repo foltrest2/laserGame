@@ -71,76 +71,255 @@ public class Matrix {
 	 * @param k is the number of mirrors
 	 */
 	public void createRandomMirror(int k) {
-		if(k > 0 && !(k > (numRows*numCols))) {
-			Node current = first;
+		if(k > 0) {
 			int m = (int) (Math.random() * numRows); 
 			int n = (int) (Math.random() * numCols);
-			boolean haveMirror = false;
-			boolean created = createRandomMirror(m, n, current, haveMirror);
-			if (created == false) {
+			Node choosen = searchNode(m, n, first);
+			if(choosen.getMirror().equals("")) {
+				assignMirror(choosen);
 				createRandomMirror(k-1);
 			}
 			else
 				createRandomMirror(k);
 		}
 	}
-	/**
-	 * This method checks if some node in the rows have a mirror, and if it hasn't and 
-	 * is the node with the random location, choose it to assign the mirror  
-	 * @param m is the random coordinate of the row
-	 * @param n is the random coordinate of the col
-	 * @param current is the current node
-	 * @param haveMirror is a boolean verifying if the node have a mirror
-	 * @return a boolean saying if the searched node have a mirror
-	 */
-	private boolean createRandomMirror(int m, int n, Node current, boolean haveMirror) {
-		if(current != null) {
-			if(current.getRight()!=null)
-				haveMirror = lookAtTheCols(m, n, current.getRight(), haveMirror);
+
+	public Node searchNode(int m, int n, Node current) {
+		Node lookAt = null;
+		if(current!=null) {
 			if(current.getRow() == m && current.getCol() == n) {
-				if(current.getContain().equals("[ ]")) {
-					assignMirror(current);
-				}
-				else
-					haveMirror = true;
+				return current;
+			}else {
+				lookAt = lookAtTheCols(m,n, current.getRight());
 			}
-			current = current.getDown();
-			return createRandomMirror(m, n, current, haveMirror);
+			if(lookAt==null) {
+				lookAt = searchNode(m,n, current.getDown());
+			}
 		}
-		return haveMirror;
+		return lookAt; 
+	}
+	public Node lookAtTheCols(int m, int n, Node current) {
+		Node lookAt = null;
+		if(current!=null) {
+			if(current.getRow() == m && current.getCol() == n) {
+				return current;
+			}else {
+				lookAt = lookAtTheCols(m, n, current.getRight());
+			}
+		}
+		return lookAt;
+	}
+
+	public Node searchNodeWithReference(String reference, Node current) {
+		Node lookAt = null;
+		if(current!=null) {
+			if(current.getReference().equals(reference)) {
+				return current;
+			}else {
+				lookAt = lookAtTheColsForTheReference(reference, current.getRight());
+			}
+			if(lookAt==null) {
+				lookAt = searchNodeWithReference(reference, current.getDown());
+			}
+		}
+		return lookAt; 
+	}
+	public Node lookAtTheColsForTheReference(String reference, Node current) {
+		Node lookAt = null;
+		if(current!=null) {
+			if(current.getReference().equals(reference)) {
+				return current;
+			}else {
+				lookAt = lookAtTheColsForTheReference(reference, current.getRight());
+			}
+		}
+		return lookAt;
 	}
 	/**
-	 * This method checks if some node in the columns have a mirror, and if it hasn't and 
-	 * is the node with the random location, choose it to assign the mirror  
-	 * @param m is the random coordinate of the row
-	 * @param n is the random coordinate of the col
-	 * @param current is the current node
-	 * @param haveMirror is a boolean verifying if the node have a mirror
-	 * @return a boolean saying if the searched node have a mirror
+	 * This method decides the inclination of the mirror randomly
+	 * @param node is the node to assign the mirror
 	 */
-	private boolean lookAtTheCols(int m, int n, Node current, boolean haveMirror) {
-		if(current != null) {
-			if(current.getRow() == m && current.getCol() == n) {
-				if(current.getContain().equals("[ ]")) {
-					assignMirror(current);
+	private void assignMirror(Node node) {
+		int random = (int)(Math.random()*2);
+		if(random == 0) {
+			node.setMirror("/");
+			node.setContain("[" + node.getMirror() + "]");
+		}
+		if(random == 1) {
+			node.setMirror("\\");
+			node.setContain("[" + node.getMirror() + "]");
+		}
+	}
+
+	public void shoot(String reference) {
+		int m = Integer.parseInt(Character.toString(reference.charAt(0)));
+		char n = reference.charAt(1); 
+		String ref = Character.toString(reference.charAt(0)) + Character.toString(reference.charAt(1));
+		Node searched;
+		if(n==65) {
+			searched = searchNodeWithReference(ref, first);
+			searched.setContain("[S]");
+			if(m == 1) {
+				char d = reference.charAt(2);
+				if (d == 'H') 
+					bulletGoRight(searched);
+				else
+					bulletGoDown(searched);
+			}
+			else if (m == numRows) {
+				char d = reference.charAt(2);
+				if (d == 'H') 
+					bulletGoRight(searched);
+				else
+					bulletGoUp(searched);
+			}
+			else
+				bulletGoRight(searched);	
+		}
+		else if(m == 1) {
+			searched = searchNodeWithReference(ref, first);
+			searched.setContain("[S]");
+			if (n-(numCols-1) == 65) {
+				char d = reference.charAt(2);
+				if (d == 'H') 
+					bulletGoLeft(searched);
+				else
+					bulletGoDown(searched);
+			}
+			else
+				bulletGoDown(searched);
+
+		}
+		else if(m == numRows) {
+			searched = searchNodeWithReference(ref, first);
+			searched.setContain("[S]");
+			if(n-(numCols-1) == 65) {
+				char d = reference.charAt(2);
+				if (d == 'H') 
+					bulletGoLeft(searched);
+				else
+					bulletGoUp(searched);
+			}
+			else
+				bulletGoUp(searched);
+		}
+		else if(n-(numCols-1) == 65) {
+			searched = searchNodeWithReference(ref, first);
+			searched.setContain("[S]");
+			bulletGoLeft(searched);
+		}
+	}
+
+	public void bulletGoDown(Node start) {
+		if(start != null) {
+			if(start.getMirror().equals("")) {
+				if(start.getDown() != null) {
+					start = start.getDown();
+					bulletGoDown(start);
 				}
 				else
-					haveMirror = true;
+					start.setContain("[E]");
 			}
-			current = current.getRight();
-			return lookAtTheCols(m, n, current, haveMirror);
-		}
-		return haveMirror;
+			else if(start.getMirror().equals("/")) {
+				if (start.getLeft() != null) {
+					start = start.getLeft();
+					bulletGoLeft(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else {
+				if (start.getRight() != null) {
+					start = start.getRight();
+					bulletGoRight(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+		}	
 	}
-	/**
-	 * This method decides the inclination of the mirror aleatory
-	 * @param current is the node to assign the mirror
-	 */
-	private void assignMirror(Node current) {
-		if((int)(Math.random()*100+1) % 2 == 0)
-			current.setContain("[/]");
-		if((int)(Math.random()*100+1) % 2 != 0)
-			current.setContain("[\\]");
+	private void bulletGoRight(Node start) {
+		if(start != null) {
+			if(start.getMirror().equals("")) {
+				if (start.getRight() != null) {
+					start = start.getRight();
+					bulletGoRight(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else if(start.getMirror().equals("/")) {
+				if (start.getUp() != null) {
+					start = start.getUp();
+					bulletGoUp(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else {
+				if (start.getDown() != null) {
+					start = start.getDown();
+					bulletGoDown(start);
+				}
+				start.setContain("[E]");
+			}
+		}
+	}
+	private void bulletGoUp(Node start) {
+		if(start != null) {
+			if(start.getMirror().equals("")) {
+				if (start.getUp() != null) {
+					start = start.getUp();
+					bulletGoUp(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else if(start.getMirror().equals("/")) {
+				if (start.getRight() != null) {
+					start = start.getRight();
+					bulletGoRight(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else {
+				if (start.getLeft() != null) {
+					start = start.getLeft();
+					bulletGoLeft(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+		}
+	}
+	private void bulletGoLeft(Node start) {
+		if(start != null) {
+			if(start.getMirror().equals("")) {
+				if (start.getLeft() != null) {
+					start = start.getLeft();
+					bulletGoLeft(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else if(start.getMirror().equals("/")) {
+				if (start.getDown() != null) {
+					start = start.getDown();
+					bulletGoDown(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+			else {
+				if (start.getUp() != null) {
+					start = start.getUp();
+					bulletGoUp(start);
+				}
+				else
+					start.setContain("[E]");
+			}
+		}
 	}
 	/**
 	 *This method obtains the info of all the matrix
