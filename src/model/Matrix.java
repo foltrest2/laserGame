@@ -19,10 +19,8 @@ public class Matrix {
 	/**
 	 * This method calls the methods to create the matrix
 	 */
-	public void createBoard() {
-		//		System.out.println("Creemos esta mierda");
+	private void createBoard() {
 		first = new Node(0,0);
-		//		System.out.println("Se crea el first");
 		makeRow(0,0, first);
 	}
 	/**
@@ -33,7 +31,6 @@ public class Matrix {
 	 * @param currentRow is the current node in the row
 	 */
 	private void makeRow(int i, int j, Node currentRow) {
-		//		System.out.println("En makeRow con la fila " + i);
 		makeCol(i,j+1, currentRow, currentRow.getUp());
 		if (i+1<numRows) {
 			Node newRow = new Node(i+1,j);
@@ -51,7 +48,6 @@ public class Matrix {
 	 * @param rowPrev is the node of the previous row in the same column
 	 */
 	private void makeCol(int i, int j, Node prev, Node rowPrev) {
-		//		System.out.println("	En makeCol con la columna " + j);
 		if(j<numCols) {
 			Node current = new Node(i,j);
 			current.setLeft(prev);
@@ -83,8 +79,15 @@ public class Matrix {
 				createRandomMirror(k);
 		}
 	}
-
-	public Node searchNode(int m, int n, Node current) {
+	/**
+	 * This method search a node in the rows of the matrix and calls the method who's
+	 * look at the columns
+	 * @param m is the random number of the row searched
+	 * @param n is the random number of the column searched
+	 * @param current is the current node
+	 * @return the searched node
+	 */
+	private Node searchNode(int m, int n, Node current) {
 		Node lookAt = null;
 		if(current!=null) {
 			if(current.getRow() == m && current.getCol() == n) {
@@ -98,7 +101,14 @@ public class Matrix {
 		}
 		return lookAt; 
 	}
-	public Node lookAtTheCols(int m, int n, Node current) {
+	/**
+	 * This method search a node in the columns of the matrix
+	 * @param m is the random number of the row searched
+	 * @param n is the random number of the column searched
+	 * @param current is the current node
+	 * @return the searched node
+	 */
+	private Node lookAtTheCols(int m, int n, Node current) {
 		Node lookAt = null;
 		if(current!=null) {
 			if(current.getRow() == m && current.getCol() == n) {
@@ -109,8 +119,14 @@ public class Matrix {
 		}
 		return lookAt;
 	}
-
-	public Node searchNodeWithReference(String reference, Node current) {
+	/**
+	 * This method search a node by his reference in the rows of the matrix and calls the method who's
+	 * look at the columns
+	 * @param reference is the reference searched
+	 * @param current is the current node
+	 * @return the searched node
+	 */
+	private Node searchNodeWithReference(String reference, Node current) {
 		Node lookAt = null;
 		if(current!=null) {
 			if(current.getReference().equals(reference)) {
@@ -124,7 +140,13 @@ public class Matrix {
 		}
 		return lookAt; 
 	}
-	public Node lookAtTheColsForTheReference(String reference, Node current) {
+	/**
+	 * This method search a node by his reference in the columns
+	 * @param reference is the reference searched
+	 * @param current is the current node
+	 * @return the searched node
+	 */
+	private Node lookAtTheColsForTheReference(String reference, Node current) {
 		Node lookAt = null;
 		if(current!=null) {
 			if(current.getReference().equals(reference)) {
@@ -143,14 +165,15 @@ public class Matrix {
 		int random = (int)(Math.random()*2);
 		if(random == 0) {
 			node.setMirror("/");
-			node.setContain("[" + node.getMirror() + "]");
 		}
 		if(random == 1) {
 			node.setMirror("\\");
-			node.setContain("[" + node.getMirror() + "]");
 		}
 	}
-
+	/**
+	 * This method addresses the laser in the matrix
+	 * @param reference is the start node
+	 */
 	public void shoot(String reference) {
 		int m = Integer.parseInt(Character.toString(reference.charAt(0)));
 		char n = reference.charAt(1); 
@@ -162,19 +185,19 @@ public class Matrix {
 			if(m == 1) {
 				char d = reference.charAt(2);
 				if (d == 'H') 
-					bulletGoRight(searched);
+					laserGoRight(searched);
 				else
-					bulletGoDown(searched);
+					laserGoDown(searched);
 			}
 			else if (m == numRows) {
 				char d = reference.charAt(2);
 				if (d == 'H') 
-					bulletGoRight(searched);
+					laserGoRight(searched);
 				else
-					bulletGoUp(searched);
+					laserGoUp(searched);
 			}
 			else
-				bulletGoRight(searched);	
+				laserGoRight(searched);	
 		}
 		else if(m == 1) {
 			searched = searchNodeWithReference(ref, first);
@@ -182,12 +205,12 @@ public class Matrix {
 			if (n-(numCols-1) == 65) {
 				char d = reference.charAt(2);
 				if (d == 'H') 
-					bulletGoLeft(searched);
+					laserGoLeft(searched);
 				else
-					bulletGoDown(searched);
+					laserGoDown(searched);
 			}
 			else
-				bulletGoDown(searched);
+				laserGoDown(searched);
 
 		}
 		else if(m == numRows) {
@@ -196,129 +219,161 @@ public class Matrix {
 			if(n-(numCols-1) == 65) {
 				char d = reference.charAt(2);
 				if (d == 'H') 
-					bulletGoLeft(searched);
+					laserGoLeft(searched);
 				else
-					bulletGoUp(searched);
+					laserGoUp(searched);
 			}
 			else
-				bulletGoUp(searched);
+				laserGoUp(searched);
 		}
 		else if(n-(numCols-1) == 65) {
 			searched = searchNodeWithReference(ref, first);
 			searched.setContain("[S]");
-			bulletGoLeft(searched);
+			laserGoLeft(searched);
 		}
 	}
-
-	public void bulletGoDown(Node start) {
-		if(start != null) {
-			if(start.getMirror().equals("")) {
-				if(start.getDown() != null) {
-					start = start.getDown();
-					bulletGoDown(start);
+	/**
+	 * This method addresses the laser below
+	 * @param current is the current position of the laser
+	 */
+	private void laserGoDown(Node current) {
+		if(current != null) {
+			if(current.getMirror().equals("")) {
+				if(current.getDown() != null) {
+					current = current.getDown();
+					laserGoDown(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
-			else if(start.getMirror().equals("/")) {
-				if (start.getLeft() != null) {
-					start = start.getLeft();
-					bulletGoLeft(start);
+			else if(current.getMirror().equals("/")) {
+				if (current.getLeft() != null) {
+					current = current.getLeft();
+					laserGoLeft(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
 			else {
-				if (start.getRight() != null) {
-					start = start.getRight();
-					bulletGoRight(start);
+				if (current.getRight() != null) {
+					current = current.getRight();
+					laserGoRight(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
 		}	
 	}
-	private void bulletGoRight(Node start) {
-		if(start != null) {
-			if(start.getMirror().equals("")) {
-				if (start.getRight() != null) {
-					start = start.getRight();
-					bulletGoRight(start);
+	/**
+	 * This method addresses the laser to the right
+	 * @param current is the current position of the laser
+	 */
+	private void laserGoRight(Node current) {
+		if(current != null) {
+			if(current.getMirror().equals("")) {
+				if (current.getRight() != null) {
+					current = current.getRight();
+					laserGoRight(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
-			else if(start.getMirror().equals("/")) {
-				if (start.getUp() != null) {
-					start = start.getUp();
-					bulletGoUp(start);
+			else if(current.getMirror().equals("/")) {
+				if (current.getUp() != null) {
+					current = current.getUp();
+					laserGoUp(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
 			else {
-				if (start.getDown() != null) {
-					start = start.getDown();
-					bulletGoDown(start);
+				if (current.getDown() != null) {
+					current = current.getDown();
+					laserGoDown(current);
 				}
-				start.setContain("[E]");
+				current.setContain("[E]");
 			}
 		}
 	}
-	private void bulletGoUp(Node start) {
-		if(start != null) {
-			if(start.getMirror().equals("")) {
-				if (start.getUp() != null) {
-					start = start.getUp();
-					bulletGoUp(start);
+	/**
+	 * This method addresses the laser above
+	 * @param current is the current position of the laser
+	 */
+	private void laserGoUp(Node current) {
+		if(current != null) {
+			if(current.getMirror().equals("")) {
+				if (current.getUp() != null) {
+					current = current.getUp();
+					laserGoUp(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
-			else if(start.getMirror().equals("/")) {
-				if (start.getRight() != null) {
-					start = start.getRight();
-					bulletGoRight(start);
+			else if(current.getMirror().equals("/")) {
+				if (current.getRight() != null) {
+					current = current.getRight();
+					laserGoRight(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
 			else {
-				if (start.getLeft() != null) {
-					start = start.getLeft();
-					bulletGoLeft(start);
+				if (current.getLeft() != null) {
+					current = current.getLeft();
+					laserGoLeft(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
 		}
 	}
-	private void bulletGoLeft(Node start) {
-		if(start != null) {
-			if(start.getMirror().equals("")) {
-				if (start.getLeft() != null) {
-					start = start.getLeft();
-					bulletGoLeft(start);
+	/**
+	 * This method addresses the laser to the left
+	 * @param current is the current position of the laser
+	 */
+	private void laserGoLeft(Node current) {
+		if(current != null) {
+			if(current.getMirror().equals("")) {
+				if (current.getLeft() != null) {
+					current = current.getLeft();
+					laserGoLeft(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
-			else if(start.getMirror().equals("/")) {
-				if (start.getDown() != null) {
-					start = start.getDown();
-					bulletGoDown(start);
+			else if(current.getMirror().equals("/")) {
+				if (current.getDown() != null) {
+					current = current.getDown();
+					laserGoDown(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
 			else {
-				if (start.getUp() != null) {
-					start = start.getUp();
-					bulletGoUp(start);
+				if (current.getUp() != null) {
+					current = current.getUp();
+					laserGoUp(current);
 				}
 				else
-					start.setContain("[E]");
+					current.setContain("[E]");
 			}
+		}
+	}
+
+	public void resetContainRows(int m, int n) {
+		Node reset = searchNode(m, n, first);
+		if (reset != null) {
+			reset.setContain("[ ]");
+			resetContainCols(m, n, reset);
+			reset = searchNode(m+1, n, reset.getDown());
+		}
+	}
+	
+	public void resetContainCols(int m, int n, Node current) {
+		if (current != null) {
+			current.setContain("[ ]");
+			current = searchNode(m, n+1, current);
+			resetContainCols(m, n, current.getRight());
 		}
 	}
 	/**
