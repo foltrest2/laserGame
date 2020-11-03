@@ -259,8 +259,10 @@ public class Matrix {
 					current = current.getRight();
 					laserGoRight(current);
 				}
-				else
+				else {
 					current.setContain("[E]");
+					return;
+				}
 			}
 		}	
 	}
@@ -291,7 +293,8 @@ public class Matrix {
 					current = current.getDown();
 					laserGoDown(current);
 				}
-				current.setContain("[E]");
+				else
+					current.setContain("[E]");
 			}
 		}
 	}
@@ -359,22 +362,60 @@ public class Matrix {
 			}
 		}
 	}
-
-	public void resetContainRows(int m, int n) {
+	/**
+	 * This method reset the contain of the matrix
+	 * @param m is the current row
+	 * @param n is the current column
+	 */
+	public void resetContain(int m, int n) {
 		Node reset = searchNode(m, n, first);
 		if (reset != null) {
-			reset.setContain("[ ]");
-			resetContainCols(m, n, reset);
-			reset = searchNode(m+1, n, reset.getDown());
+			if (reset.getContain().equals("[S]") || reset.getContain().equals("[E]") || reset.getContain().equals("[X]")) {
+				reset.setContain("[ ]");
+			}
+			resetContainCols(m, n+1);
+			resetContain(m+1, n);
 		}
 	}
-	
-	public void resetContainCols(int m, int n, Node current) {
-		if (current != null) {
-			current.setContain("[ ]");
-			current = searchNode(m, n+1, current);
-			resetContainCols(m, n, current.getRight());
+	/**
+	 * This method reset the contain of the columns of the matrix
+	 * @param m is the current row
+	 * @param n is the current column
+	 */
+	private void resetContainCols(int m, int n) {
+		Node reset = searchNode(m, n, first);
+		if (reset != null) {
+			if (reset.getContain().equals("[S]") || reset.getContain().equals("[E]") || reset.getContain().equals("[X]")) {
+				reset.setContain("[ ]");
+			}
+			resetContainCols(m, n+1);
 		}
+	}
+	/**
+	 * This method locate a mirror in the matrix
+	 * @param location is a String with the info of the reference and inclination of the mirror
+	 */
+	public int locateMirror(String location, int k) {
+		int mirrors = k;
+		String reference = 	Character.toString(location.charAt(1)) + Character.toString(location.charAt(2));
+		char inclination = location.charAt(3);
+		Node searched = searchNodeWithReference(reference, first);
+		if (searched.getMirror().equals("")) {
+			searched.setContain("[X]");
+		}
+		else if (searched.getMirror().equals("/") && inclination == 'R') {
+			searched.setContain("[" + searched.getMirror() + "]");
+			mirrors -= 1;
+		}
+		else if (searched.getMirror().equals("/") && inclination == 'L') 
+			searched.setContain("[X]");
+		else if (searched.getMirror().equals("\\") && inclination == 'L') {
+			searched.setContain("[" + searched.getMirror() + "]");
+			mirrors -= 1;
+		}
+		else
+			searched.setContain("[X]");
+		return mirrors;
 	}
 	/**
 	 *This method obtains the info of all the matrix
@@ -411,13 +452,10 @@ public class Matrix {
 		}
 		return info;
 	}
-
 	public Node getFirst() {
 		return first;
 	}
-
 	public void setFirst(Node first) {
 		this.first = first;
 	}
-
 }
