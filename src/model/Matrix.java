@@ -498,6 +498,11 @@ public class Matrix {
 			searched.setContain("[X]");
 		return mirrors;
 	}
+	/**
+	 * This method increases the score given in one
+	 * @param current is the current score
+	 * @return the new score
+	 */
 	public int score(int current) {
 		current += 1;
 		return current;
