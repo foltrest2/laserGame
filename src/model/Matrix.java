@@ -95,7 +95,7 @@ public class Matrix {
 			}else {
 				lookAt = lookAtTheCols(m,n, current.getRight());
 			}
-			if(lookAt==null) {
+			if(lookAt == null) {
 				lookAt = searchNode(m,n, current.getDown());
 			}
 		}
@@ -110,7 +110,7 @@ public class Matrix {
 	 */
 	private Node lookAtTheCols(int m, int n, Node current) {
 		Node lookAt = null;
-		if(current!=null) {
+		if(current != null) {
 			if(current.getRow() == m && current.getCol() == n) {
 				return current;
 			}else {
@@ -174,63 +174,81 @@ public class Matrix {
 	 * This method addresses the laser in the matrix
 	 * @param reference is the start node
 	 */
-	public void shoot(String reference) {
-		int m = Integer.parseInt(Character.toString(reference.charAt(0)));
-		char n = reference.charAt(1); 
-		String ref = Character.toString(reference.charAt(0)) + Character.toString(reference.charAt(1));
-		Node searched;
-		if(n==65) {
-			searched = searchNodeWithReference(ref, first);
-			searched.setContain("[S]");
-			if(m == 1) {
-				char d = reference.charAt(2);
-				if (d == 'H') 
-					laserGoRight(searched);
-				else
-					laserGoDown(searched);
-			}
-			else if (m == numRows) {
-				char d = reference.charAt(2);
-				if (d == 'H') 
-					laserGoRight(searched);
-				else
-					laserGoUp(searched);
-			}
-			else
-				laserGoRight(searched);	
+	public String shoot(String reference) {
+		int x = reference.length();
+		String row, col, letter, ref;
+		if (Character.isLetter(reference.charAt(x-2))) {
+			row = reference.substring(0, x-2);
+			col = reference.substring(x-2, x);
+			letter = reference.substring(x-2, x-1);
+			ref = row + letter;
 		}
-		else if(m == 1) {
-			searched = searchNodeWithReference(ref, first);
-			searched.setContain("[S]");
-			if (n-(numCols-1) == 65) {
-				char d = reference.charAt(2);
-				if (d == 'H') 
-					laserGoLeft(searched);
+		else {
+			row = reference.substring(0, x-1);
+			col = reference.substring(x-1, x);
+			ref = row + col;
+		}
+		int m = Integer.parseInt(row);
+		char n = col.charAt(0); 
+		Node searched = searchNodeWithReference(ref, first);
+		if (searched == null) {
+			return "Invalid reference!";
+		}
+		else {
+			if(n==65) {
+				searched = searchNodeWithReference(ref, first);
+				searched.setContain("[S]");
+				if(m == 1) {
+					char d = col.charAt(1);
+					if (d == 'H') 
+						laserGoRight(searched);
+					else
+						laserGoDown(searched);
+				}
+				else if (m == numRows) {
+					char d = col.charAt(1);
+					if (d == 'H') 
+						laserGoRight(searched);
+					else
+						laserGoUp(searched);
+				}
+				else
+					laserGoRight(searched);	
+			}
+			else if(m == 1) {
+				searched = searchNodeWithReference(ref, first);
+				searched.setContain("[S]");
+				if (n-(numCols-1) == 65) {
+					char d = col.charAt(1);
+					if (d == 'H') 
+						laserGoLeft(searched);
+					else
+						laserGoDown(searched);
+				}
 				else
 					laserGoDown(searched);
-			}
-			else
-				laserGoDown(searched);
 
-		}
-		else if(m == numRows) {
-			searched = searchNodeWithReference(ref, first);
-			searched.setContain("[S]");
-			if(n-(numCols-1) == 65) {
-				char d = reference.charAt(2);
-				if (d == 'H') 
-					laserGoLeft(searched);
+			}
+			else if(m == numRows) {
+				searched = searchNodeWithReference(ref, first);
+				searched.setContain("[S]");
+				if(n-(numCols-1) == 65) {
+					char d = col.charAt(1);
+					if (d == 'H') 
+						laserGoLeft(searched);
+					else
+						laserGoUp(searched);
+				}
 				else
 					laserGoUp(searched);
 			}
-			else
-				laserGoUp(searched);
+			else if(n-(numCols-1) == 65) {
+				searched = searchNodeWithReference(ref, first);
+				searched.setContain("[S]");
+				laserGoLeft(searched);
+			}
 		}
-		else if(n-(numCols-1) == 65) {
-			searched = searchNodeWithReference(ref, first);
-			searched.setContain("[S]");
-			laserGoLeft(searched);
-		}
+		return "";
 	}
 	/**
 	 * This method addresses the laser below
@@ -370,9 +388,9 @@ public class Matrix {
 	public void resetContain(int m, int n) {
 		Node reset = searchNode(m, n, first);
 		if (reset != null) {
-			if (reset.getContain().equals("[S]") || reset.getContain().equals("[E]") || reset.getContain().equals("[X]")) {
-				reset.setContain("[ ]");
-			}
+			//			if (reset.getContain().equals("[S]") || reset.getContain().equals("[E]") || reset.getContain().equals("[X]")) {
+			reset.setContain("[ ]");
+			//			}
 			resetContainCols(m, n+1);
 			resetContain(m+1, n);
 		}
@@ -385,10 +403,70 @@ public class Matrix {
 	private void resetContainCols(int m, int n) {
 		Node reset = searchNode(m, n, first);
 		if (reset != null) {
-			if (reset.getContain().equals("[S]") || reset.getContain().equals("[E]") || reset.getContain().equals("[X]")) {
-				reset.setContain("[ ]");
-			}
+			reset.setContain("[ ]");
 			resetContainCols(m, n+1);
+		}
+	}
+	/**
+	 * This method put again the mirrors discovered by the player in the matrix
+	 * @param m is the current row
+	 * @param n is the current column
+	 */
+	public void putMirrorAgain(int m, int n) {
+		Node reset = searchNode(m, n, first);
+		if (reset != null) {
+			if (!(reset.getDiscover().equals(""))) {
+				reset.setContain(reset.getDiscover());
+			}
+			putMirrorAgainCols(m, n+1);
+			putMirrorAgain(m+1, n);
+		}
+	}
+	/**
+	 * This method put again the mirrors discovered by the player in the columns of the matrix
+	 * @param m is the current row
+	 * @param n is the current column
+	 */
+	private void putMirrorAgainCols(int m, int n) {
+		Node reset = searchNode(m, n, first);
+		if (reset != null) {
+			if (!reset.getDiscover().equals("")) {
+				reset.setContain(reset.getDiscover());
+			}
+			putMirrorAgainCols(m, n+1);
+		}
+	}
+	/**
+	 * This method put all the mirrors in the matrix
+	 * @param m is the current row
+	 * @param n is the current column
+	 */
+	public void cheatMode(int m, int n) {
+		Node reset = searchNode(m, n, first);
+		if (reset != null) {
+			if (!(reset.getMirror().equals(""))) {
+				reset.setContain("[" + reset.getMirror() + "]");
+			}
+			else
+				reset.setContain("[ ]");
+			cheatModeCols(m, n+1);
+			cheatMode(m+1, n);
+		}
+	}
+	/**
+	 * This method put the mirrors in the columns of the matrix
+	 * @param m is the current row
+	 * @param n is the current column
+	 */
+	private void cheatModeCols(int m, int n) {
+		Node reset = searchNode(m, n, first);
+		if (reset != null) {
+			if (!(reset.getMirror().equals(""))) {
+				reset.setContain("[" + reset.getMirror() + "]");
+			}
+			else
+				reset.setContain("[ ]");
+			cheatModeCols(m, n+1);
 		}
 	}
 	/**
@@ -397,25 +475,80 @@ public class Matrix {
 	 */
 	public int locateMirror(String location, int k) {
 		int mirrors = k;
-		String reference = 	Character.toString(location.charAt(1)) + Character.toString(location.charAt(2));
-		char inclination = location.charAt(3);
-		Node searched = searchNodeWithReference(reference, first);
+		int x = location.length();
+		String row, col, letter, ref;
+		if (Character.isLetter(location.charAt(x-2))) {
+			row = location.substring(0, x-2);
+			col = location.substring(x-2, x);
+			letter = location.substring(x-2, x-1);
+			ref = row + letter;
+		}
+		else {
+			row = location.substring(0, x-1);
+			col = location.substring(x-1, x);
+			ref = row + col;
+		}
+		char inclination = col.charAt(1);
+		Node searched = searchNodeWithReference(ref, first);
 		if (searched.getMirror().equals("")) {
 			searched.setContain("[X]");
 		}
 		else if (searched.getMirror().equals("/") && inclination == 'R') {
-			searched.setContain("[" + searched.getMirror() + "]");
+			searched.setDiscover("[" + searched.getMirror() + "]");
 			mirrors -= 1;
 		}
 		else if (searched.getMirror().equals("/") && inclination == 'L') 
 			searched.setContain("[X]");
 		else if (searched.getMirror().equals("\\") && inclination == 'L') {
-			searched.setContain("[" + searched.getMirror() + "]");
+			searched.setDiscover("[" + searched.getMirror() + "]");
 			mirrors -= 1;
 		}
 		else
 			searched.setContain("[X]");
 		return mirrors;
+	}
+	private String printInOrder(Player ply, String infoScores) {
+        if (ply == null) 
+            return infoScores; 
+
+        /* first recur on left child /
+        printInOrder(ply.getLeft(), infoScores);
+
+        / then print the data of node /
+        infoScores += "Nickname: "+ply.getNickName()+"\nScore: "+ply.getScore()+"\n"; 
+
+        / now recur on right child */
+        return printInOrder(ply.getSonR(), infoScores); 
+
+    }
+	public void addPlayer(String nickName, long score) {
+        Player toAdd = new Player(nickName, score);
+        if(root == null) {
+            root = toAdd;
+        } else {
+            addPlayer(root, toAdd);
+        }
+    }
+	/**
+	 * This method 
+	 * @param currentPlayer
+	 * @param newPlayer
+	 */
+	private void addPlayer(Player currentPlayer, Player newPlayer) {
+		if (newPlayer.getScore() <= currentPlayer.getScore() && currentPlayer.getSonL() == null) {
+			currentPlayer.setSonL(newPlayer);
+		} else if (newPlayer.getScore() >= currentPlayer.getScore() && currentPlayer.getSonR() == null) {
+			currentPlayer.setSonR(newPlayer);
+		} else {
+			if(newPlayer.getScore() <= currentPlayer.getScore() && currentPlayer.getSonL() != null) {
+				addPlayer(currentPlayer.getSonL(), newPlayer);
+				return;
+			} 
+			else {
+				addPlayer(currentPlayer.getSonR(), newPlayer);
+				return;
+			}
+		}
 	}
 	/**
 	 *This method obtains the info of all the matrix

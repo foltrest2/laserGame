@@ -4,6 +4,7 @@ public class Node {
 
 	private String mirror;
 	private String contain;
+	private String discover;
 	private String reference;
 	private Node up;
 	private Node down;
@@ -16,6 +17,7 @@ public class Node {
 		row = r;
 		col = c;
 		mirror = "";
+		discover = "";
 		contain = "[ ]";
 		reference = (row+1) + "" +getNameCol() + "";
 	}
@@ -30,6 +32,12 @@ public class Node {
 	}
 	public void setContain(String contain) {
 		this.contain = contain;
+	}
+	public String getDiscover() {
+		return discover;
+	}
+	public void setDiscover(String discover) {
+		this.discover = discover;
 	}
 	public String getReference() {
 		return reference;
@@ -83,5 +91,5 @@ public class Node {
 	public String toString() {
 		return contain;
 	}
-
+	
 }

@@ -43,7 +43,7 @@ public class Menu {
 		String start = lector.nextLine();
 		String[] info = start.split(" ");
 		System.out.println();
-		mx = new Matrix(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+		mx = new Matrix(Integer.parseInt(info[2]), Integer.parseInt(info[1]));
 		mx.createRandomMirror(Integer.parseInt(info[3]));
 		System.out.println(mx);
 		play(info[0], Integer.parseInt(info[3]));
@@ -56,21 +56,67 @@ public class Menu {
 	 */
 	private void play(String nickName, int k) {
 		if(k > 0) {
-			System.out.println("Type a reference to shoot a laser\n");
+			System.out.println("You will shoot or you know where is the mirror?\n");
 			String reference = lector.nextLine();
-			if (!reference.equals("menu")) {
-				mx.shoot(reference);
-				System.out.println(mx);
-				mx.resetContain(0, 0);
-				System.out.println("Where the mirror is?\n");
-				String location = lector.nextLine();
-				int mirrors = mx.locateMirror(location, k);
-				System.out.println(mx);
-				mx.resetContain(0, 0);
-				System.out.println(nickName + ": " + mirrors + " mirrors remaining\n");
-				play(nickName, mirrors);
+			char whatIs = reference.charAt(0);
+			if (!reference.equalsIgnoreCase("menu")) {
+				if (whatIs == 'L') {
+					if (reference.charAt(reference.length()-1) != 'L' && reference.charAt(reference.length()-1) != 'R') {
+						System.out.println("The direction is with R or L!\n");
+						play(nickName, k);
+					}
+					else {
+						int mirrors = mx.locateMirror(reference, k);
+						System.out.println(mx);
+						mx.resetContain(0, 0);
+						System.out.println(nickName + ": " + mirrors + " mirrors remaining\n");
+						play(nickName, mirrors);
+					}
+				}
+				else if(Character.isDigit(whatIs)){
+					if (Character.isLetter(reference.charAt(reference.length()-1)) || Character.isLetter(reference.charAt(reference.length()-2))) {
+						if (Character.isLetter(reference.charAt(reference.length()-1)) && Character.isLetter(reference.charAt(reference.length()-2))) {
+							if (reference.charAt(reference.length()-1) != 'H' && reference.charAt(reference.length()-1) != 'V') {
+								System.out.println("The direcition of the shoot, when it's a corner, is with H or V!");
+								play(nickName, k);
+							}
+							else {
+								String invalid = mx.shoot(reference);
+								if (invalid != "") {
+									System.out.println(invalid + "\n");
+									play(nickName, k);
+								}
+								else {
+									System.out.println(mx);
+									mx.resetContain(0, 0);
+									mx.putMirrorAgain(0, 0);
+									System.out.println(nickName + ": " + k + " mirrors remaining\n");
+									play(nickName, k);
+								}
+							}
+						}
+					}
+					else {
+						System.out.println("Invalid reference!\n");
+						play(nickName, k);	
+					}
+				}
+				else if(reference.equalsIgnoreCase("cheat mode")) {
+					mx.cheatMode(0, 0);
+					System.out.println(mx);
+					mx.resetContain(0, 0);
+					mx.putMirrorAgain(0, 0);
+					System.out.println(nickName + ": " + k + " mirrors remaining\n");
+					play(nickName, k);
+				}
+				else {
+					System.out.println("Type a valid reference please!");
+					play(nickName, k);
+				}
 			}
 		}
+		else
+			System.out.println("You won!");
 	}
 	/**
 	 * This method directs the petition to the respective method
