@@ -5,6 +5,7 @@ public class Matrix {
 	private Node first;
 	private int numRows;
 	private int numCols;
+	private Player head;
 
 	/**
 	 * This method is the constructor of Matrix
@@ -476,30 +477,20 @@ public class Matrix {
 	public int locateMirror(String location, int k) {
 		int mirrors = k;
 		int x = location.length();
-		String row, col, letter, ref;
-		if (Character.isLetter(location.charAt(x-2))) {
-			row = location.substring(0, x-2);
-			col = location.substring(x-2, x);
-			letter = location.substring(x-2, x-1);
-			ref = row + letter;
-		}
-		else {
-			row = location.substring(0, x-1);
-			col = location.substring(x-1, x);
-			ref = row + col;
-		}
-		char inclination = col.charAt(1);
+		String inclination, ref;
+		ref = location.substring(1, x-1);
+		inclination = location.substring(x-1, x);
 		Node searched = searchNodeWithReference(ref, first);
 		if (searched.getMirror().equals("")) {
 			searched.setContain("[X]");
 		}
-		else if (searched.getMirror().equals("/") && inclination == 'R') {
+		else if (searched.getMirror().equals("/") && inclination.equals("R")) {
 			searched.setDiscover("[" + searched.getMirror() + "]");
 			mirrors -= 1;
 		}
-		else if (searched.getMirror().equals("/") && inclination == 'L') 
+		else if (searched.getMirror().equals("/") && inclination.equals("L")) 
 			searched.setContain("[X]");
-		else if (searched.getMirror().equals("\\") && inclination == 'L') {
+		else if (searched.getMirror().equals("\\") && inclination.equals("L")) {
 			searched.setDiscover("[" + searched.getMirror() + "]");
 			mirrors -= 1;
 		}
@@ -507,45 +498,66 @@ public class Matrix {
 			searched.setContain("[X]");
 		return mirrors;
 	}
-	private String printInOrder(Player ply, String infoScores) {
-        if (ply == null) 
-            return infoScores; 
-
-        /* first recur on left child /
-        printInOrder(ply.getLeft(), infoScores);
-
-        / then print the data of node /
-        infoScores += "Nickname: "+ply.getNickName()+"\nScore: "+ply.getScore()+"\n"; 
-
-        / now recur on right child */
-        return printInOrder(ply.getSonR(), infoScores); 
-
-    }
-	public void addPlayer(String nickName, long score) {
-        Player toAdd = new Player(nickName, score);
-        if(root == null) {
-            root = toAdd;
-        } else {
-            addPlayer(root, toAdd);
-        }
-    }
+	public int score(int current) {
+		current += 1;
+		return current;
+	}
 	/**
-	 * This method 
-	 * @param currentPlayer
-	 * @param newPlayer
+	 * This method print the binary tree
+	 * @return the binary tree
 	 */
-	private void addPlayer(Player currentPlayer, Player newPlayer) {
-		if (newPlayer.getScore() <= currentPlayer.getScore() && currentPlayer.getSonL() == null) {
-			currentPlayer.setSonL(newPlayer);
-		} else if (newPlayer.getScore() >= currentPlayer.getScore() && currentPlayer.getSonR() == null) {
-			currentPlayer.setSonR(newPlayer);
+	public String displayTree() {
+		String info = "";
+		if(head != null) {
+			info = displayTree(head,"");
+		}
+		return info;
+	}
+	/**
+	 * This method go to the binary tree and get's the info 
+	 * @param p is the player
+	 * @param info is the info obtained
+	 * @return the info of the tree
+	 */
+	private String displayTree(Player p, String info) {
+		if (p != null) {
+			displayTree(p.getSonL(), info);
+			info += "Nickname: "+p.getNickName()+"\nScore: "+p.getScore()+"\n"; 
+			return displayTree(p.getSonR(), info);
+		}
+		else
+			return info; 
+	}
+	/**
+	 * This method create the player to add to the binary tree
+	 * @param n is the nick name of the player
+	 * @param s is his score
+	 */
+	public void addPlayer(String n, int s) {
+		Player toAdd = new Player(n, s);
+		if(head == null) {
+			head = toAdd;
 		} else {
-			if(newPlayer.getScore() <= currentPlayer.getScore() && currentPlayer.getSonL() != null) {
-				addPlayer(currentPlayer.getSonL(), newPlayer);
+			addPlayer(head, toAdd);
+		}
+	}
+	/**
+	 * This method add a player to the binary tree
+	 * @param current is the current player
+	 * @param newP is the new player
+	 */
+	private void addPlayer(Player current, Player newP) {
+		if (newP.getScore() <= current.getScore() && current.getSonL() == null) {
+			current.setSonL(newP);
+		} else if (newP.getScore() >= current.getScore() && current.getSonR() == null) {
+			current.setSonR(newP);
+		} else {
+			if(newP.getScore() <= current.getScore() && current.getSonL() != null) {
+				addPlayer(current.getSonL(), newP);
 				return;
 			} 
 			else {
-				addPlayer(currentPlayer.getSonR(), newPlayer);
+				addPlayer(current.getSonR(), newP);
 				return;
 			}
 		}

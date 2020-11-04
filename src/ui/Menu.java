@@ -46,15 +46,15 @@ public class Menu {
 		mx = new Matrix(Integer.parseInt(info[2]), Integer.parseInt(info[1]));
 		mx.createRandomMirror(Integer.parseInt(info[3]));
 		System.out.println(mx);
-		play(info[0], Integer.parseInt(info[3]));
-
+		int score = play(info[0], Integer.parseInt(info[3]), 0);
+		mx.addPlayer(info[0], score);
 	}
 	/**
 	 * This method execute the game
 	 * @param nickName is the nick name of the player
 	 * @param k is the number of mirrors remaining
 	 */
-	private void play(String nickName, int k) {
+	private int play(String nickName, int k, int score) {
 		if(k > 0) {
 			System.out.println("You will shoot or you know where is the mirror?\n");
 			String reference = lector.nextLine();
@@ -63,14 +63,17 @@ public class Menu {
 				if (whatIs == 'L') {
 					if (reference.charAt(reference.length()-1) != 'L' && reference.charAt(reference.length()-1) != 'R') {
 						System.out.println("The direction is with R or L!\n");
-						play(nickName, k);
+						return play(nickName, k, score);
 					}
 					else {
 						int mirrors = mx.locateMirror(reference, k);
 						System.out.println(mx);
 						mx.resetContain(0, 0);
 						System.out.println(nickName + ": " + mirrors + " mirrors remaining\n");
-						play(nickName, mirrors);
+						if (mirrors != k) {
+							score = mx.score(score);
+						}
+						return play(nickName, mirrors, score);
 					}
 				}
 				else if(Character.isDigit(whatIs)){
@@ -78,27 +81,27 @@ public class Menu {
 						if (Character.isLetter(reference.charAt(reference.length()-1)) && Character.isLetter(reference.charAt(reference.length()-2))) {
 							if (reference.charAt(reference.length()-1) != 'H' && reference.charAt(reference.length()-1) != 'V') {
 								System.out.println("The direcition of the shoot, when it's a corner, is with H or V!");
-								play(nickName, k);
+								return play(nickName, k, score);
 							}
 							else {
 								String invalid = mx.shoot(reference);
 								if (invalid != "") {
 									System.out.println(invalid + "\n");
-									play(nickName, k);
+									return play(nickName, k, score);
 								}
 								else {
 									System.out.println(mx);
 									mx.resetContain(0, 0);
 									mx.putMirrorAgain(0, 0);
 									System.out.println(nickName + ": " + k + " mirrors remaining\n");
-									play(nickName, k);
+									return play(nickName, k, score);
 								}
 							}
 						}
 					}
 					else {
 						System.out.println("Invalid reference!\n");
-						play(nickName, k);	
+						return play(nickName, k, score);	
 					}
 				}
 				else if(reference.equalsIgnoreCase("cheat mode")) {
@@ -107,16 +110,17 @@ public class Menu {
 					mx.resetContain(0, 0);
 					mx.putMirrorAgain(0, 0);
 					System.out.println(nickName + ": " + k + " mirrors remaining\n");
-					play(nickName, k);
+					return play(nickName, k, score);
 				}
 				else {
 					System.out.println("Type a valid reference please!");
-					play(nickName, k);
+					return play(nickName, k, score);
 				}
 			}
 		}
 		else
 			System.out.println("You won!");
+		return score;
 	}
 	/**
 	 * This method directs the petition to the respective method
@@ -128,7 +132,7 @@ public class Menu {
 			instructions();
 			break;
 		case 2:
-
+			System.out.println(mx.displayTree());
 			break;
 		case 3:
 			System.out.println("Thanks for playing!");
