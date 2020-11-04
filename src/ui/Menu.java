@@ -69,6 +69,7 @@ public class Menu {
 						int mirrors = mx.locateMirror(reference, k);
 						System.out.println(mx);
 						mx.resetContain(0, 0);
+						mx.putMirrorAgain(0, 0);
 						System.out.println(nickName + ": " + mirrors + " mirrors remaining\n");
 						if (mirrors != k) {
 							score = mx.score(score);
@@ -98,10 +99,24 @@ public class Menu {
 								}
 							}
 						}
+						else {
+							String invalid = mx.shoot(reference);
+							if (invalid != "") {
+								System.out.println(invalid + "\n");
+								return play(nickName, k, score);
+							}
+							else {
+								System.out.println(mx);
+								mx.resetContain(0, 0);
+								mx.putMirrorAgain(0, 0);
+								System.out.println(nickName + ": " + k + " mirrors remaining\n");
+								return play(nickName, k, score);
+							}
+						}
 					}
 					else {
-						System.out.println("Invalid reference!\n");
-						return play(nickName, k, score);	
+						System.out.println("Type a valid reference please!");
+						return play(nickName, k, score);
 					}
 				}
 				else if(reference.equalsIgnoreCase("cheat mode")) {

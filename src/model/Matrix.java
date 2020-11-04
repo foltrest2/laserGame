@@ -262,16 +262,26 @@ public class Matrix {
 					current = current.getDown();
 					laserGoDown(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else if(current.getMirror().equals("/")) {
 				if (current.getLeft() != null) {
 					current = current.getLeft();
 					laserGoLeft(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else {
 				if (current.getRight() != null) {
@@ -279,7 +289,11 @@ public class Matrix {
 					laserGoRight(current);
 				}
 				else {
-					current.setContain("[E]");
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
 					return;
 				}
 			}
@@ -296,24 +310,39 @@ public class Matrix {
 					current = current.getRight();
 					laserGoRight(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else if(current.getMirror().equals("/")) {
 				if (current.getUp() != null) {
 					current = current.getUp();
 					laserGoUp(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else {
 				if (current.getDown() != null) {
 					current = current.getDown();
 					laserGoDown(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 		}
 	}
@@ -328,24 +357,39 @@ public class Matrix {
 					current = current.getUp();
 					laserGoUp(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else if(current.getMirror().equals("/")) {
 				if (current.getRight() != null) {
 					current = current.getRight();
 					laserGoRight(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else {
 				if (current.getLeft() != null) {
 					current = current.getLeft();
 					laserGoLeft(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 		}
 	}
@@ -360,24 +404,39 @@ public class Matrix {
 					current = current.getLeft();
 					laserGoLeft(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else if(current.getMirror().equals("/")) {
 				if (current.getDown() != null) {
 					current = current.getDown();
 					laserGoDown(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 			else {
 				if (current.getUp() != null) {
 					current = current.getUp();
 					laserGoUp(current);
 				}
-				else
-					current.setContain("[E]");
+				else {
+					if (current.getContain().equals("[S]")) {
+						current.setContain("[R]");
+					}
+					else
+						current.setContain("[E]");
+				}
 			}
 		}
 	}
@@ -489,13 +548,13 @@ public class Matrix {
 			mirrors -= 1;
 		}
 		else if (searched.getMirror().equals("/") && inclination.equals("L")) 
-			searched.setContain("[X]");
+			searched.setContain("[R]");
 		else if (searched.getMirror().equals("\\") && inclination.equals("L")) {
 			searched.setDiscover("[" + searched.getMirror() + "]");
 			mirrors -= 1;
 		}
 		else
-			searched.setContain("[X]");
+			searched.setContain("[L]");
 		return mirrors;
 	}
 	/**
