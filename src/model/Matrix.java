@@ -177,20 +177,20 @@ public class Matrix {
 	 */
 	public String shoot(String reference) {
 		int x = reference.length();
-		String row, col, letter, ref;
+		String row, colAndDir, col, ref;
 		if (Character.isLetter(reference.charAt(x-2))) {
 			row = reference.substring(0, x-2);
-			col = reference.substring(x-2, x);
-			letter = reference.substring(x-2, x-1);
-			ref = row + letter;
+			colAndDir = reference.substring(x-2, x);
+			col = reference.substring(x-2, x-1);
+			ref = row + col;
 		}
 		else {
 			row = reference.substring(0, x-1);
-			col = reference.substring(x-1, x);
-			ref = row + col;
+			colAndDir = reference.substring(x-1, x);
+			ref = row + colAndDir;
 		}
 		int m = Integer.parseInt(row);
-		char n = col.charAt(0); 
+		char n = colAndDir.charAt(0); 
 		Node searched = searchNodeWithReference(ref, first);
 		if (searched == null) {
 			return "Invalid reference!";
@@ -200,14 +200,14 @@ public class Matrix {
 				searched = searchNodeWithReference(ref, first);
 				searched.setContain("[S]");
 				if(m == 1) {
-					char d = col.charAt(1);
+					char d = colAndDir.charAt(1);
 					if (d == 'H') 
 						laserGoRight(searched);
 					else
 						laserGoDown(searched);
 				}
 				else if (m == numRows) {
-					char d = col.charAt(1);
+					char d = colAndDir.charAt(1);
 					if (d == 'H') 
 						laserGoRight(searched);
 					else
@@ -220,7 +220,7 @@ public class Matrix {
 				searched = searchNodeWithReference(ref, first);
 				searched.setContain("[S]");
 				if (n-(numCols-1) == 65) {
-					char d = col.charAt(1);
+					char d = colAndDir.charAt(1);
 					if (d == 'H') 
 						laserGoLeft(searched);
 					else
@@ -234,7 +234,7 @@ public class Matrix {
 				searched = searchNodeWithReference(ref, first);
 				searched.setContain("[S]");
 				if(n-(numCols-1) == 65) {
-					char d = col.charAt(1);
+					char d = colAndDir.charAt(1);
 					if (d == 'H') 
 						laserGoLeft(searched);
 					else
@@ -585,9 +585,9 @@ public class Matrix {
 	 */
 	private String displayTree(Player p, String info) {
 		if (p != null) {
-			displayTree(p.getSonL(), info);
+			displayTree(p.getSonR(), info);
 			info += "Nickname: "+p.getNickName()+"\nScore: "+p.getScore()+"\n"; 
-			return displayTree(p.getSonR(), info);
+			return displayTree(p.getSonL(), info);
 		}
 		else
 			return info; 
@@ -611,12 +611,12 @@ public class Matrix {
 	 * @param newP is the new player
 	 */
 	private void addPlayer(Player current, Player newP) {
-		if (newP.getScore() <= current.getScore() && current.getSonL() == null) {
+		if (newP.getScore() < current.getScore() && current.getSonL() == null) {
 			current.setSonL(newP);
-		} else if (newP.getScore() >= current.getScore() && current.getSonR() == null) {
+		} else if (newP.getScore() > current.getScore() && current.getSonR() == null) {
 			current.setSonR(newP);
 		} else {
-			if(newP.getScore() <= current.getScore() && current.getSonL() != null) {
+			if(newP.getScore() < current.getScore() && current.getSonL() != null) {
 				addPlayer(current.getSonL(), newP);
 				return;
 			} 

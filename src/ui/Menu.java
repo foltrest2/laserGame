@@ -67,6 +67,7 @@ public class Menu {
 					}
 					else {
 						int mirrors = mx.locateMirror(reference, k);
+						mx.putMirrorAgain(0, 0);
 						System.out.println(mx);
 						mx.resetContain(0, 0);
 						mx.putMirrorAgain(0, 0);
@@ -91,6 +92,7 @@ public class Menu {
 									return play(nickName, k, score);
 								}
 								else {
+									mx.putMirrorAgain(0, 0);
 									System.out.println(mx);
 									mx.resetContain(0, 0);
 									mx.putMirrorAgain(0, 0);
@@ -106,6 +108,7 @@ public class Menu {
 								return play(nickName, k, score);
 							}
 							else {
+								mx.putMirrorAgain(0, 0);
 								System.out.println(mx);
 								mx.resetContain(0, 0);
 								mx.putMirrorAgain(0, 0);
