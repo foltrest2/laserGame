@@ -1,7 +1,15 @@
 package model;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class GeneralController {
 
+	private final static String SERIALIZE = "data/player's_scores.xd";
+	
 	private Matrix matrix;
 	private Player head;
 	private String printTree;
@@ -579,9 +587,6 @@ public class GeneralController {
 	public Matrix getMatrix() {
 		return matrix;
 	}
-	public void setMatrix(Matrix matrix) {
-		this.matrix = matrix;
-	}
 	/**
 	 * This method creates a new matrix
 	 * @param m are the rows
@@ -590,4 +595,23 @@ public class GeneralController {
 	public void addMatrix(int m, int n) {
         matrix = new Matrix(m, n);
     }
+	/**
+	 * This method serialize the scores of the players
+	 * @throws IOException when something failed
+	 */
+	public void saveScore() throws IOException {
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SERIALIZE));
+		oos.writeObject(head);
+		oos.close();
+	}
+	/**
+	 * This method deserialize the scores of the players
+	 * @throws IOException when something failed
+	 * @throws ClassNotFoundException when the class isn't found
+	 */
+	public void loadScore() throws IOException, ClassNotFoundException{	
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SERIALIZE));
+		head = (Player)ois.readObject();
+		ois.close();
+	}
 }

@@ -12,6 +12,8 @@ public class Matrix {
 		createBoard();
 	}
 	/**
+	 * Obtained of: https://github.com/seyerman/java-intermediate-course-examples/tree/master/linked-matrix-base
+	 * By teacher Juan Reyes
 	 * This method calls the methods to create the matrix
 	 */
 	private void createBoard() {
@@ -19,6 +21,8 @@ public class Matrix {
 		makeRow(0,0, first);
 	}
 	/**
+	 * * Obtained of: https://github.com/seyerman/java-intermediate-course-examples/tree/master/linked-matrix-base
+	 * By teacher Juan Reyes
 	 * This method create the row of the matrix and their relations
 	 * 
 	 * @param i is the current row to create
@@ -35,6 +39,8 @@ public class Matrix {
 		}
 	}
 	/**
+	* Obtained of: https://github.com/seyerman/java-intermediate-course-examples/tree/master/linked-matrix-base
+	 * By teacher Juan Reyes 
 	 * This method create the columns of the matrix and their relations
 	 * 
 	 * @param i is the current row to create
@@ -56,6 +62,8 @@ public class Matrix {
 		}
 	}
 	/**
+	 * Obtained of: https://github.com/seyerman/java-intermediate-course-examples/tree/master/linked-matrix-base
+	 * By teacher Juan Reyes 
 	 *This method obtains the info of all the matrix
 	 * @return the info
 	 */
@@ -65,6 +73,8 @@ public class Matrix {
 		return info;
 	}
 	/**
+	 * Obtained of: https://github.com/seyerman/java-intermediate-course-examples/tree/master/linked-matrix-base
+	 * By teacher Juan Reyes 
 	 *This method obtains the info of the nodes in the rows of the matrix 
 	 * @param current is the current node
 	 * @return the info
@@ -78,6 +88,8 @@ public class Matrix {
 		return info;
 	}
 	/**
+	 * Obtained of: https://github.com/seyerman/java-intermediate-course-examples/tree/master/linked-matrix-base
+	 * By teacher Juan Reyes 
 	 *This method obtains the info of the nodes in the columns of the matrix 
 	 * @param current is the current node
 	 * @return the info

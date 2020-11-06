@@ -1,5 +1,6 @@
 package ui;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import model.GeneralController;
@@ -16,6 +17,13 @@ public class Menu {
 	public Menu() {
 		lector = new Scanner(System.in);
 		instructions();
+		try {
+			gc.loadScore();
+		} catch (ClassNotFoundException e) {
+			System.err.println("Data can't be loaded");
+		} catch (IOException e) {
+			System.err.println("Data can't be loaded");
+		}
 	}
 	private void instructions() {
 		System.out.println("Hello! There's some instructions\n");
@@ -57,6 +65,11 @@ public class Menu {
 			System.out.println(gc.getMatrix());
 			int score = play(info[0], Integer.parseInt(info[3]), 0);
 			gc.addPlayer(info[0], score);
+			try {
+				gc.saveScore();
+			} catch (IOException e) {
+				System.err.println("Data can't be saved");
+			}
 		}
 	}
 	/**
